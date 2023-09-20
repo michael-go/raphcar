@@ -32,7 +32,7 @@ export function Terrain() {
     );
 
     heightField.forEach((v, index) => {
-      (geometry.attributes.position.array as any)[index * 3 + 2] = v;
+      (geometry.attributes.position.array as any)[index * 3 + 2] = v - 0.2;
     });
     geometry.scale(-1, 1, 1);
     geometry.rotateX(Math.PI / 2);
@@ -43,11 +43,19 @@ export function Terrain() {
     return geometry;
   }, [heightField]);
 
+  const geometry2 = new THREE.PlaneGeometry(100, 100);
+  geometry2.rotateX(-Math.PI / 2);
+
   return (
     <RigidBody colliders={false} position={[0, 0, 0]}>
       <mesh geometry={geometry} castShadow receiveShadow>
-        <meshPhysicalMaterial color="limegreen" side={2} wireframe={false} />
+        <meshStandardMaterial
+          color="limegreen"
+          side={THREE.DoubleSide}
+          shadowSide={THREE.DoubleSide}
+        />
       </mesh>
+
       <HeightfieldCollider
         args={[
           widthSegments,
