@@ -1,6 +1,6 @@
 import "./App.css";
 
-import { useMemo, useRef } from "react";
+import { RefObject, useMemo, useRef } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import {
   KeyboardControls,
@@ -15,11 +15,12 @@ import { Car } from "./components/Car.tsx";
 import { Terrain } from "./components/Terrain.tsx";
 
 function World() {
-  const lightRef = useRef();
+  const lightRef: RefObject<THREE.DirectionalLight> = useRef(null);
   const { physDebug } = useControls({ physDebug: false });
 
   useFrame((state) => {
     const light = lightRef.current;
+    if (!light) return;
     light.position.copy(state.camera.position);
     light.position.x += 5;
     light.position.z += 5;

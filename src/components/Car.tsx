@@ -1,11 +1,11 @@
 import { useKeyboardControls, useGLTF } from "@react-three/drei";
 import { useFrame, RootState } from "@react-three/fiber";
-import { useRef, useState } from "react";
+import { RefObject, useRef, useState } from "react";
 import { MathUtils } from "three";
 import * as THREE from "three";
 
 import { ControlKeys } from "../common/controls.ts";
-import { MeshCollider, RigidBody } from "@react-three/rapier";
+import { MeshCollider, RapierRigidBody, RigidBody } from "@react-three/rapier";
 import {
   WheelInfo,
   useVehicleController,
@@ -15,9 +15,9 @@ export function Car() {
   const [smoothedCameraPositon] = useState(new THREE.Vector3(10, 10, 10));
   const [smoothedCameraTarget] = useState(new THREE.Vector3());
 
-  const chasisMeshRef = useRef();
-  const chasisBodyRef = useRef();
-  const wheelsRef = useRef([]);
+  const chasisMeshRef: RefObject<THREE.Group> = useRef(null);
+  const chasisBodyRef: RefObject<RapierRigidBody> = useRef(null);
+  const wheelsRef: RefObject<(THREE.Object3D | null)[]> = useRef([]);
 
   const wheelInfo: WheelInfo = {
     axleCs: new THREE.Vector3(1, 0, 0),
@@ -29,7 +29,7 @@ export function Car() {
 
   const { vehicleController } = useVehicleController(
     chasisBodyRef,
-    wheelsRef,
+    wheelsRef as RefObject<THREE.Object3D[]>,
     wheelsInfo
   );
 
@@ -65,6 +65,7 @@ export function Car() {
   });
 
   useFrame((state: RootState, delta: number) => {
+    if (!chasisMeshRef.current) return;
     const bodyPosition = chasisMeshRef.current.getWorldPosition(
       new THREE.Vector3()
     );
@@ -90,7 +91,7 @@ export function Car() {
 
   const { nodes, materials } = useGLTF(
     "https://vazxmixjsiawhamofees.supabase.co/storage/v1/object/public/models/truck/model.gltf"
-  );
+  ) as any;
   return (
     <RigidBody
       linearDamping={0.5}
@@ -133,7 +134,7 @@ export function Car() {
           </group>
         </MeshCollider>
         <group
-          ref={(ref: Object3D) => (wheelsRef.current[2] = ref)}
+          ref={(ref) => ((wheelsRef.current as any)[2] = ref)}
           position={[-0.35, 0.3, 0.76]}
           scale={[-1, 1, 1]}
         >
@@ -147,7 +148,7 @@ export function Car() {
           />
         </group>
         <group
-          ref={(ref: Object3D) => (wheelsRef.current[3] = ref)}
+          ref={(ref) => ((wheelsRef.current as any)[3] = ref)}
           position={[0.35, 0.3, 0.76]}
         >
           <mesh
@@ -160,7 +161,7 @@ export function Car() {
           />
         </group>
         <group
-          ref={(ref: Object3D) => (wheelsRef.current[0] = ref)}
+          ref={(ref) => ((wheelsRef.current as any)[0] = ref)}
           position={[-0.35, 0.3, -0.86]}
           scale={[-1, 1, 1]}
         >
@@ -174,7 +175,7 @@ export function Car() {
           />
         </group>
         <group
-          ref={(ref: Object3D) => (wheelsRef.current[1] = ref)}
+          ref={(ref) => ((wheelsRef.current as any)[1] = ref)}
           position={[0.35, 0.3, -0.86]}
         >
           <mesh
