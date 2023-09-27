@@ -9,6 +9,7 @@ import {
 } from "@react-three/drei";
 import { Physics } from "@react-three/rapier";
 import { useControls } from "leva";
+import { Perf } from "r3f-perf";
 
 import { ControlKeys } from "./common/controls.ts";
 import { Car } from "./components/Car.tsx";
@@ -76,6 +77,7 @@ function App() {
         shadows
         camera={{ fov: 45, near: 0.1, far: 400, position: [3, 5, 10] }}
       >
+        <Perf position="top-left" />
         <World />
       </Canvas>
     </KeyboardControls>
