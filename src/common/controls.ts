@@ -3,6 +3,7 @@ export enum ControlKeys {
     back = "back",
     left = "left",
     right = "right",
+    jumproll = "jumproll"
   }
   
   

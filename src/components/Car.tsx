@@ -1,15 +1,21 @@
 import { useKeyboardControls, useGLTF } from "@react-three/drei";
 import { useFrame, RootState } from "@react-three/fiber";
-import { RefObject, useRef, useState } from "react";
+import { RefObject, useEffect, useRef, useState } from "react";
 import { MathUtils } from "three";
 import * as THREE from "three";
 
 import { ControlKeys } from "../common/controls.ts";
-import { MeshCollider, RapierRigidBody, RigidBody } from "@react-three/rapier";
+import {
+  MeshCollider,
+  RapierRigidBody,
+  RigidBody,
+  useRapier,
+} from "@react-three/rapier";
 import {
   WheelInfo,
   useVehicleController,
 } from "../hooks/vehicleController.tsx";
+import { Collider } from "@dimforge/rapier3d-compat";
 
 export function Car() {
   const [smoothedCameraPositon] = useState(new THREE.Vector3(10, 10, 10));
@@ -33,7 +39,8 @@ export function Car() {
     wheelsInfo
   );
 
-  const [_, get] = useKeyboardControls<ControlKeys>();
+  const [sub, get] = useKeyboardControls<ControlKeys>();
+  const { rapier, world } = useRapier();
 
   useFrame(() => {
     if (!vehicleController) return;
@@ -64,6 +71,35 @@ export function Car() {
     vehicleController.setWheelSteering(1, steering);
   });
 
+  const jumproll = () => {
+    if (!chasisBodyRef.current) return;
+
+    const origin = chasisBodyRef.current.translation();
+    const direction = { x: 0, y: -1, z: 0 };
+    const ray = new rapier.Ray(origin, direction);
+    const hit = world.castRay(
+      ray,
+      2,
+      true,
+      rapier.QueryFilterFlags.ONLY_FIXED,
+      undefined,
+      undefined,
+      undefined,
+      (collider: Collider) => {
+        return collider.shape.type == rapier.ShapeType.HeightField;
+      }
+    );
+
+    // TODO: check also rotation of the car, otherwise it can jump during jumps
+    if (hit && hit.toi > 0.15 && hit.toi < 1.5) {
+      chasisBodyRef.current.applyImpulse({ x: 5, y: 30, z: 5 }, true);
+      chasisBodyRef.current.applyTorqueImpulse(
+        { x: Math.random() * 5, y: Math.random() * 5, z: Math.random() * 5 },
+        true
+      );
+    }
+  };
+
   useFrame((state: RootState, delta: number) => {
     if (!chasisMeshRef.current) return;
     const bodyPosition = chasisMeshRef.current.getWorldPosition(
@@ -88,6 +124,19 @@ export function Car() {
     state.camera.position.copy(smoothedCameraPositon);
     state.camera.lookAt(smoothedCameraTarget);
   });
+
+  useEffect(() => {
+    const unsubscribeJump = sub(
+      (state) => state.jumproll,
+      (value) => {
+        if (value) jumproll();
+      }
+    );
+
+    return () => {
+      unsubscribeJump();
+    };
+  }, []);
 
   const { nodes, materials } = useGLTF(
     "https://vazxmixjsiawhamofees.supabase.co/storage/v1/object/public/models/truck/model.gltf"

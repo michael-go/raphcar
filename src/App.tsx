@@ -34,7 +34,7 @@ function World() {
   return (
     <>
       <OrbitControls />
-      {/* <ambientLight intensity={0.5} /> */}
+      <ambientLight intensity={0.5} />
       <directionalLight
         ref={lightRef}
         position={[10, 10, 10]}
@@ -49,7 +49,7 @@ function World() {
         shadow-camera-bottom={-100}
         shadow-camera-top={100}
       />
-      <axesHelper scale={20} />
+      <axesHelper scale={20} visible={false} />
       <Physics debug={physDebug}>
         <Terrain />
         <Car />
@@ -65,6 +65,7 @@ function App() {
       { name: ControlKeys.back, keys: ["ArrowDown", "KeyS"] },
       { name: ControlKeys.left, keys: ["ArrowLeft", "KeyA"] },
       { name: ControlKeys.right, keys: ["ArrowRight", "KeyD"] },
+      { name: ControlKeys.jumproll, keys: ["Space"] },
     ],
     []
   );
