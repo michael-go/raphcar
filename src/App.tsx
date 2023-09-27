@@ -41,14 +41,14 @@ function World() {
         position={[10, 10, 10]}
         intensity={2}
         castShadow
-        shadow-mapSize={[10000, 10000]}
+        shadow-mapSize={[4096, 4096]}
         shadow-bias={-0.001}
-        shadow-camera-near={-5}
+        shadow-camera-near={0.1}
         shadow-camera-far={100}
-        shadow-camera-left={-100}
-        shadow-camera-right={100}
-        shadow-camera-bottom={-100}
-        shadow-camera-top={100}
+        shadow-camera-left={-50}
+        shadow-camera-right={50}
+        shadow-camera-bottom={-50}
+        shadow-camera-top={50}
       />
       <axesHelper scale={20} visible={false} />
       <Physics debug={physDebug}>
