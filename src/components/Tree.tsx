@@ -1,5 +1,6 @@
 import { useGLTF } from "@react-three/drei";
 import { RigidBody } from "@react-three/rapier";
+import { useMemo } from "react";
 
 const treeUrls = [
   "https://vazxmixjsiawhamofees.supabase.co/storage/v1/object/public/models/tree-beech/model.gltf",
@@ -10,7 +11,11 @@ export function Tree({
   position = [0, 0, 0] as [number, number, number],
   scale = [1, 1, 1] as [number, number, number],
 }) {
-  const tree = useGLTF(treeUrls[Math.floor(Math.random() * treeUrls.length)]);
+  const treeIndex = useMemo(
+    () => Math.floor(Math.random() * treeUrls.length),
+    []
+  );
+  const tree = useGLTF(treeUrls[treeIndex]);
 
   // TODO: cloning the entire scene is expensive, should share the geometry (at least)
 

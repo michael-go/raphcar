@@ -47,21 +47,33 @@ export function Terrain() {
   const geometry2 = new THREE.PlaneGeometry(100, 100);
   geometry2.rotateX(-Math.PI / 2);
 
+  const [treePositions, treeScales] = useMemo(() => {
+    const positions = [];
+    const scales = [];
+
+    for (let i = 0; i < 100; i++) {
+      positions.push([
+        (Math.random() - 0.5) * height,
+        0,
+        (Math.random() - 0.5) * width,
+      ]);
+      scales.push([
+        Math.max(0.8, Math.random()),
+        Math.max(0.7, Math.random()),
+        Math.max(0.8, Math.random()),
+      ]);
+    }
+
+    return [positions, scales];
+  }, []);
+
   return (
     <>
-      {Array.from({ length: 100 }, (_, i) => (
+      {treePositions.map((_, i) => (
         <Tree
           key={i}
-          position={[
-            (Math.random() - 0.5) * height,
-            0,
-            (Math.random() - 0.5) * width,
-          ]}
-          scale={[
-            Math.max(0.8, Math.random()),
-            Math.max(0.7, Math.random()),
-            Math.max(0.8, Math.random()),
-          ]}
+          position={treePositions[i] as [number, number, number]}
+          scale={treeScales[i] as [number, number, number]}
         />
       ))}
       <RigidBody colliders={false} position={[0, 0, 0]}>
