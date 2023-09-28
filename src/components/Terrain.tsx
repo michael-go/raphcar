@@ -1,6 +1,7 @@
 import { HeightfieldCollider, RigidBody } from "@react-three/rapier";
 import { useMemo } from "react";
 import * as THREE from "three";
+import { Tree } from "./Tree.tsx";
 
 export function Terrain() {
   const width = 1000;
@@ -47,23 +48,40 @@ export function Terrain() {
   geometry2.rotateX(-Math.PI / 2);
 
   return (
-    <RigidBody colliders={false} position={[0, 0, 0]}>
-      <mesh geometry={geometry} castShadow receiveShadow>
-        <meshStandardMaterial
-          color="limegreen"
-          side={THREE.DoubleSide}
-          shadowSide={THREE.DoubleSide}
+    <>
+      {Array.from({ length: 100 }, (_, i) => (
+        <Tree
+          key={i}
+          position={[
+            (Math.random() - 0.5) * height,
+            0,
+            (Math.random() - 0.5) * width,
+          ]}
+          scale={[
+            Math.max(0.8, Math.random()),
+            Math.max(0.7, Math.random()),
+            Math.max(0.8, Math.random()),
+          ]}
         />
-      </mesh>
+      ))}
+      <RigidBody colliders={false} position={[0, 0, 0]}>
+        <mesh geometry={geometry} castShadow receiveShadow>
+          <meshStandardMaterial
+            color="limegreen"
+            side={THREE.DoubleSide}
+            shadowSide={THREE.DoubleSide}
+          />
+        </mesh>
 
-      <HeightfieldCollider
-        args={[
-          widthSegments,
-          heightSegments,
-          heightField as number[],
-          { x: height, y: 1, z: width },
-        ]}
-      />
-    </RigidBody>
+        <HeightfieldCollider
+          args={[
+            widthSegments,
+            heightSegments,
+            heightField as number[],
+            { x: height, y: 1, z: width },
+          ]}
+        />
+      </RigidBody>
+    </>
   );
 }
