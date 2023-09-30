@@ -18,7 +18,7 @@ import {
 import { Collider } from "@dimforge/rapier3d-compat";
 
 export function Car() {
-  const [smoothedCameraPositon] = useState(new THREE.Vector3(10, 10, 10));
+  const [smoothedCameraPosition] = useState(new THREE.Vector3(10, 10, 10));
   const [smoothedCameraTarget] = useState(new THREE.Vector3());
 
   const chasisMeshRef: RefObject<THREE.Group> = useRef(null);
@@ -47,7 +47,7 @@ export function Car() {
 
     const accelerateForce = 48;
     const brakeForce = 12;
-    const steerAngle = Math.PI / 12;
+    const steerAngle = Math.PI / 24;
 
     const controls = get();
 
@@ -102,26 +102,31 @@ export function Car() {
 
   useFrame((state: RootState, delta: number) => {
     if (!chasisMeshRef.current) return;
+
+    // TODO: make the camera less jerky, it gives me motion sickness
+
+    // camera position
+    const bodyWorldMatrix = chasisMeshRef.current.matrixWorld;
+
+    const relativeCameraOffset = new THREE.Vector3(0, 3, 7);
+    relativeCameraOffset.applyMatrix4(bodyWorldMatrix);
+
+    const cameraPosition = new THREE.Vector3();
+    cameraPosition.copy(relativeCameraOffset);
+    cameraPosition.y = Math.max(3, relativeCameraOffset.y);
+
+    smoothedCameraPosition.lerp(cameraPosition, 3 * delta);
+    state.camera.position.copy(smoothedCameraPosition);
+
+    // camera target
     const bodyPosition = chasisMeshRef.current.getWorldPosition(
       new THREE.Vector3()
     );
-
-    const cameraPosition = new THREE.Vector3();
-    cameraPosition.copy(bodyPosition);
-    // TODO: make distance based on speed
-    cameraPosition.z += 10;
-    cameraPosition.y += 4;
-
     const cameraTarget = new THREE.Vector3();
     cameraTarget.copy(bodyPosition);
     cameraTarget.y += 0.25;
+    smoothedCameraTarget.lerp(cameraTarget, 5 * delta);
 
-    smoothedCameraPositon.lerp(cameraPosition, 7 * delta);
-    smoothedCameraTarget.lerp(cameraTarget, 7 * delta);
-
-    // TODO: rotate camera in the direction of the car
-
-    state.camera.position.copy(smoothedCameraPositon);
     state.camera.lookAt(smoothedCameraTarget);
   });
 
