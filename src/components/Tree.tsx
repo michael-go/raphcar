@@ -13,7 +13,7 @@ export function Tree({
 }) {
   const treeIndex = useMemo(
     () => Math.floor(Math.random() * treeUrls.length),
-    []
+    [scale]
   );
   const tree = useGLTF(treeUrls[treeIndex]);
 
