@@ -20,7 +20,7 @@ export function Tree({
   // TODO: cloning the entire scene is expensive, should share the geometry (at least)
 
   return (
-    <RigidBody type="fixed" colliders="hull" position={position}>
+    <RigidBody type="fixed" colliders="trimesh" position={position}>
       <group>
         <primitive object={tree.scene.clone()} scale={scale} />
       </group>
