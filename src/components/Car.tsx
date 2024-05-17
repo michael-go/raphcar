@@ -15,7 +15,7 @@ import {
   WheelInfo,
   useVehicleController,
 } from "../hooks/vehicleController.tsx";
-import { Collider } from "@dimforge/rapier3d-compat";
+import { Collider } from "@react-three/rapier/node_modules/@dimforge/rapier3d-compat";
 
 export function Car() {
   const [smoothedCameraPosition] = useState(new THREE.Vector3(10, 10, 10));

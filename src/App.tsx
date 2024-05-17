@@ -10,6 +10,7 @@ import {
 import { Physics } from "@react-three/rapier";
 import { useControls } from "leva";
 import { Perf } from "r3f-perf";
+import * as THREE from "three";
 
 import { ControlKeys } from "./common/controls.ts";
 import { Car } from "./components/Car.tsx";
