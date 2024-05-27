@@ -1,4 +1,4 @@
-import { useKeyboardControls, useGLTF } from "@react-three/drei";
+import { useKeyboardControls, useGLTF, PositionalAudio } from "@react-three/drei";
 import { useFrame, RootState } from "@react-three/fiber";
 import { RefObject, useEffect, useRef, useState } from "react";
 import { MathUtils } from "three";
@@ -24,6 +24,9 @@ export function Car() {
   const chasisMeshRef: RefObject<THREE.Group> = useRef(null);
   const chasisBodyRef: RefObject<RapierRigidBody> = useRef(null);
   const wheelsRef: RefObject<(THREE.Object3D | null)[]> = useRef([]);
+  const engineSoundRef: RefObject<THREE.PositionalAudio> = useRef(null);
+  const accelerateSoundRef: RefObject<THREE.PositionalAudio> = useRef(null);
+  const crashSoundRef: RefObject<THREE.PositionalAudio> = useRef(null);
 
   const wheelInfo: WheelInfo = {
     axleCs: new THREE.Vector3(1, 0, 0),
@@ -42,14 +45,35 @@ export function Car() {
   const [sub, get] = useKeyboardControls<ControlKeys>();
   const { rapier, world } = useRapier();
 
-  useFrame(() => {
+  useFrame((_, delta) => {
     if (!vehicleController) return;
 
     const accelerateForce = 48;
     const brakeForce = 12;
     const steerAngle = Math.PI / 24;
 
+    const speed = vehicleController.currentVehicleSpeed();
+
     const controls = get();
+
+    engineSoundRef.current?.setVolume(0.7 - Math.abs(speed) / 20);
+    if (controls.forward || controls.back) {
+      if (engineSoundRef.current?.isPlaying === false) {
+        engineSoundRef.current?.play();
+      }
+      accelerateSoundRef.current?.setVolume(Math.abs(speed) / 30);
+      accelerateSoundRef.current?.setPlaybackRate(1 + Math.abs(speed) / 30);
+      if (accelerateSoundRef.current?.isPlaying === false) {
+        accelerateSoundRef.current?.play();
+      }
+    } else {
+      const accelerateVolume = accelerateSoundRef.current?.getVolume();
+      if (accelerateVolume && accelerateVolume > 0) {
+        accelerateSoundRef.current?.setVolume(accelerateVolume - delta * 1.2)
+      } else {
+        accelerateSoundRef.current?.stop();
+      }
+    }
 
     const engineForce =
       Number(controls.forward) * accelerateForce -
@@ -154,6 +178,15 @@ export function Car() {
       colliders={false}
       position={[0, 1, 0]}
       type="dynamic"
+      onCollisionEnter={(event) => {
+        console.log("collision other", event.other);
+        if ((event.other.rigidBodyObject as any)?.colliders) {
+          console.log("real collision", event);
+          if (crashSoundRef.current?.isPlaying === false) {
+            crashSoundRef.current?.play();
+          }
+        }
+      }}
     >
       <group castShadow receiveShadow dispose={null}>
         <MeshCollider type="hull">
@@ -242,6 +275,10 @@ export function Car() {
           />
         </group>
       </group>
+      <PositionalAudio ref={engineSoundRef} url="/assets/sounds/engine.mp3" loop distance={5} />
+      <PositionalAudio ref={accelerateSoundRef} url="/assets/sounds/accelerate.mp3" loop distance={5} />
+      <PositionalAudio ref={crashSoundRef} url="/assets/sounds/crash.mp3" loop={false} distance={5} />
+
     </RigidBody>
   );
 }
