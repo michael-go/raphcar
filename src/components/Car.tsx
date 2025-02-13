@@ -105,7 +105,7 @@ export function Car() {
       ray,
       2,
       true,
-      rapier.QueryFilterFlags.ONLY_FIXED,
+      undefined,
       undefined,
       undefined,
       undefined,
@@ -114,8 +114,9 @@ export function Car() {
       }
     );
 
+    console.log(hit)
     // TODO: check also rotation of the car, otherwise it can jump during jumps
-    if (hit && hit.toi > 0.15 && hit.toi < 1.5) {
+    if (hit && hit.timeOfImpact > 0.15 && hit.timeOfImpact < 1.5) {
       chasisBodyRef.current.applyImpulse({ x: 5, y: 30, z: 5 }, true);
       chasisBodyRef.current.applyTorqueImpulse(
         { x: Math.random() * 5, y: Math.random() * 5, z: Math.random() * 5 },
@@ -179,7 +180,6 @@ export function Car() {
       position={[0, 1, 0]}
       type="dynamic"
       onCollisionEnter={(event) => {
-        console.log("collision other", event.other);
         if ((event.other.rigidBodyObject as any)?.colliders) {
           console.log("real collision", event);
           if (crashSoundRef.current?.isPlaying === false) {
