@@ -50,7 +50,7 @@ export function Car() {
 
     const accelerateForce = 48;
     const brakeForce = 12;
-    const steerAngle = Math.PI / 24;
+    const steerAngle = Math.PI / 18;
 
     const speed = vehicleController.currentVehicleSpeed();
 
