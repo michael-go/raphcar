@@ -11,7 +11,7 @@ import {
   Text,
 } from "@react-three/drei";
 import { Physics } from "@react-three/rapier";
-import { useControls } from "leva";
+import { useControls, Leva } from "leva";
 import { Perf } from "r3f-perf";
 import * as THREE from "three";
 import { v4 as uuidv4 } from "uuid";
@@ -99,7 +99,7 @@ function World() {
         ))}
       </Physics>
       <Hud>
-        <PerspectiveCamera makeDefault position={[9, -8.5, 20]} />
+        <PerspectiveCamera makeDefault position={[0, -8.5, 20]} />
         <Text
           color="gold"
           outlineWidth={0.05}
@@ -131,7 +131,12 @@ function App() {
         shadows
         camera={{ fov: 45, near: 0.1, far: 400, position: [3, 5, 10] }}
       >
-        <Perf position="top-left" />
+        {window.location.hash === "#debug" && (
+          <>
+            <Perf position="top-left" />
+          </>
+        )}
+        {window.location.hash !== "#debug" && <Leva hidden={true} />}
         <World />
       </Canvas>
     </KeyboardControls>
