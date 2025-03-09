@@ -1,5 +1,9 @@
-import { useKeyboardControls, useGLTF, PositionalAudio } from "@react-three/drei";
-import { useFrame, RootState } from "@react-three/fiber";
+import {
+  useKeyboardControls,
+  useGLTF,
+  PositionalAudio,
+} from "@react-three/drei";
+import { useFrame, RootState, ObjectMap } from "@react-three/fiber";
 import { RefObject, useEffect, useRef, useState } from "react";
 import { MathUtils } from "three";
 import * as THREE from "three";
@@ -16,6 +20,8 @@ import {
   useVehicleController,
 } from "../hooks/vehicleController.tsx";
 import { Collider } from "@dimforge/rapier3d-compat";
+
+import { useGameStore, GameStore } from "../stores/gameStore";
 
 export function Car() {
   const [smoothedCameraPosition] = useState(new THREE.Vector3(10, 10, 10));
@@ -39,11 +45,17 @@ export function Car() {
   const { vehicleController } = useVehicleController(
     chasisBodyRef,
     wheelsRef as RefObject<THREE.Object3D[]>,
-    wheelsInfo
+    wheelsInfo,
   );
 
   const [sub, get] = useKeyboardControls<ControlKeys>();
   const { rapier, world } = useRapier();
+
+  const setCarRef = useGameStore((state: GameStore) => state.setCarRef);
+
+  useEffect(() => {
+    setCarRef(chasisMeshRef);
+  }, [chasisMeshRef, setCarRef]);
 
   useFrame((_, delta) => {
     if (!vehicleController) return;
@@ -69,7 +81,7 @@ export function Car() {
     } else {
       const accelerateVolume = accelerateSoundRef.current?.getVolume();
       if (accelerateVolume && accelerateVolume > 0) {
-        accelerateSoundRef.current?.setVolume(accelerateVolume - delta * 1.2)
+        accelerateSoundRef.current?.setVolume(accelerateVolume - delta * 1.2);
       } else {
         accelerateSoundRef.current?.stop();
       }
@@ -88,7 +100,7 @@ export function Car() {
     const steering = MathUtils.lerp(
       currentSteering,
       steerAngle * steerDirection,
-      0.5
+      0.5,
     );
 
     vehicleController.setWheelSteering(0, steering);
@@ -111,16 +123,16 @@ export function Car() {
       undefined,
       (collider: Collider) => {
         return collider.shape.type == rapier.ShapeType.HeightField;
-      }
+      },
     );
 
-    console.log(hit)
+    console.log(hit);
     // TODO: check also rotation of the car, otherwise it can jump during jumps
     if (hit && hit.timeOfImpact > 0.15 && hit.timeOfImpact < 1.5) {
       chasisBodyRef.current.applyImpulse({ x: 5, y: 30, z: 5 }, true);
       chasisBodyRef.current.applyTorqueImpulse(
         { x: Math.random() * 5, y: Math.random() * 5, z: Math.random() * 5 },
-        true
+        true,
       );
     }
   };
@@ -145,7 +157,7 @@ export function Car() {
 
     // camera target
     const bodyPosition = chasisMeshRef.current.getWorldPosition(
-      new THREE.Vector3()
+      new THREE.Vector3(),
     );
     const cameraTarget = new THREE.Vector3();
     cameraTarget.copy(bodyPosition);
@@ -160,7 +172,7 @@ export function Car() {
       (state) => state.jumproll,
       (value) => {
         if (value) jumproll();
-      }
+      },
     );
 
     return () => {
@@ -169,8 +181,9 @@ export function Car() {
   }, []);
 
   const { nodes, materials } = useGLTF(
-    "https://vazxmixjsiawhamofees.supabase.co/storage/v1/object/public/models/truck/model.gltf"
-  ) as any;
+    "https://vazxmixjsiawhamofees.supabase.co/storage/v1/object/public/models/truck/model.gltf",
+  ) as ObjectMap;
+
   return (
     <RigidBody
       linearDamping={0.5}
@@ -180,7 +193,7 @@ export function Car() {
       position={[0, 1, 0]}
       type="dynamic"
       onCollisionEnter={(event) => {
-        if ((event.other.rigidBodyObject as any)?.colliders) {
+        if (event.other.rigidBodyObject?.colliders) {
           console.log("real collision", event);
           if (crashSoundRef.current?.isPlaying === false) {
             crashSoundRef.current?.play();
@@ -221,7 +234,7 @@ export function Car() {
           </group>
         </MeshCollider>
         <group
-          ref={(ref) => ((wheelsRef.current as any)[2] = ref)}
+          ref={(ref) => (wheelsRef.current[2] = ref)}
           position={[-0.35, 0.3, 0.76]}
           scale={[-1, 1, 1]}
         >
@@ -235,7 +248,7 @@ export function Car() {
           />
         </group>
         <group
-          ref={(ref) => ((wheelsRef.current as any)[3] = ref)}
+          ref={(ref) => (wheelsRef.current[3] = ref)}
           position={[0.35, 0.3, 0.76]}
         >
           <mesh
@@ -248,7 +261,7 @@ export function Car() {
           />
         </group>
         <group
-          ref={(ref) => ((wheelsRef.current as any)[0] = ref)}
+          ref={(ref) => (wheelsRef.current[0] = ref)}
           position={[-0.35, 0.3, -0.86]}
           scale={[-1, 1, 1]}
         >
@@ -262,7 +275,7 @@ export function Car() {
           />
         </group>
         <group
-          ref={(ref) => ((wheelsRef.current as any)[1] = ref)}
+          ref={(ref) => (wheelsRef.current[1] = ref)}
           position={[0.35, 0.3, -0.86]}
         >
           <mesh
@@ -275,14 +288,28 @@ export function Car() {
           />
         </group>
       </group>
-      <PositionalAudio ref={engineSoundRef} url="/assets/sounds/engine.mp3" loop distance={5} />
-      <PositionalAudio ref={accelerateSoundRef} url="/assets/sounds/accelerate.mp3" loop distance={5} />
-      <PositionalAudio ref={crashSoundRef} url="/assets/sounds/crash.mp3" loop={false} distance={5} />
-
+      <PositionalAudio
+        ref={engineSoundRef}
+        url="/assets/sounds/engine.mp3"
+        loop
+        distance={5}
+      />
+      <PositionalAudio
+        ref={accelerateSoundRef}
+        url="/assets/sounds/accelerate.mp3"
+        loop
+        distance={5}
+      />
+      <PositionalAudio
+        ref={crashSoundRef}
+        url="/assets/sounds/crash.mp3"
+        loop={false}
+        distance={5}
+      />
     </RigidBody>
   );
 }
 
 useGLTF.preload(
-  "https://vazxmixjsiawhamofees.supabase.co/storage/v1/object/public/models/truck/model.gltf"
+  "https://vazxmixjsiawhamofees.supabase.co/storage/v1/object/public/models/truck/model.gltf",
 );

@@ -7,10 +7,12 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "deploy": "vercel --prod",
+    "format": "prettier --write .",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },
   "dependencies": {
+    "@react-spring/three": "^9.7.5",
     "@react-three/drei": "^9.121.4",
     "@react-three/fiber": "^8.17.4",
     "@react-three/rapier": "^1.5.0",
@@ -20,8 +22,12 @@
     "r3f-perf": "^7.2.3",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "seedrandom": "^3.0.5",
     "three": "^0.173.0",
-    "vercel": "^34.2.0"
+    "three-stdlib": "^2.35.13",
+    "uuid": "^11.1.0",
+    "vercel": "^34.2.0",
+    "zustand": "^5.0.3"
   },
   "devDependencies": {
     "@types/react": "^18.3.1",

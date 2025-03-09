@@ -11,7 +11,7 @@ export function Terrain() {
 
   const heightField = useMemo(() => {
     const heightField = Array((widthSegments + 1) * (heightSegments + 1)).fill(
-      0
+      0,
     );
 
     for (let h = 0; h < heightSegments + 1; h++) {
@@ -29,11 +29,12 @@ export function Terrain() {
       width,
       height,
       widthSegments,
-      heightSegments
+      heightSegments,
     );
 
     heightField.forEach((v, index) => {
-      (geometry.attributes.position.array as any)[index * 3 + 2] = v - 0.2;
+      (geometry.attributes.position.array as THREE.TypedArray)[index * 3 + 2] =
+        v - 0.2;
     });
     geometry.scale(-1, 1, 1);
     geometry.rotateX(Math.PI / 2);

@@ -19,7 +19,7 @@ export type WheelInfo = {
 export function useVehicleController(
   chassisRef: RefObject<RapierRigidBody>,
   wheelsRef: RefObject<Object3D[]>,
-  wheelsInfo: WheelInfo[]
+  wheelsInfo: WheelInfo[],
 ) {
   const { world } = useRapier();
   const [vehicleController, setVehicleController] =
@@ -42,18 +42,18 @@ export function useVehicleController(
         new Vector3(0, -1, 0),
         wheelsInfo[i].axleCs,
         wheelsInfo[i].suspensionRestLength,
-        radius
+        radius,
       );
     });
 
     wheels.forEach((_wheel, index) => {
       vehicle.setWheelSuspensionStiffness(
         index,
-        wheelsInfo[index].suspensionStiffness
+        wheelsInfo[index].suspensionStiffness,
       );
       vehicle.setWheelMaxSuspensionTravel(
         index,
-        wheelsInfo[index].maxSuspensionTravel
+        wheelsInfo[index].maxSuspensionTravel,
       );
     });
 
