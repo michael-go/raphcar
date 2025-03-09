@@ -44,7 +44,7 @@ export function Coin(
 
   const [collectAnimationStyles, collectAnimationApi] = useSpring(() => ({
     from: {
-      position: props.position?.y,
+      position: (props.position as THREE.Vector3)?.y,
     },
   }));
 
@@ -84,7 +84,7 @@ export function Coin(
       <animated.mesh
         geometry={nodes.coin.geometry}
         material={materials["Gold.009"]}
-        rotation={rotation}
+        rotation={rotation as any}
         position-y={collectAnimationStyles.position}
       />
       <PositionalAudio

@@ -193,7 +193,7 @@ export function Car() {
       position={[0, 1, 0]}
       type="dynamic"
       onCollisionEnter={(event) => {
-        if (event.other.rigidBodyObject?.colliders) {
+        if ((event.other.rigidBodyObject as any).colliders) {
           console.log("real collision", event);
           if (crashSoundRef.current?.isPlaying === false) {
             crashSoundRef.current?.play();
@@ -206,85 +206,101 @@ export function Car() {
           <group ref={chasisMeshRef}>
             <mesh
               castShadow
-              geometry={nodes.Mesh_body002.geometry}
+              geometry={(nodes.Mesh_body002 as THREE.Mesh).geometry}
               material={materials.plastic}
             />
             <mesh
-              geometry={nodes.Mesh_body002_1.geometry}
+              geometry={(nodes.Mesh_body002_1 as THREE.Mesh).geometry}
               // original: material={materials.paintGreen}
             >
               <meshStandardMaterial color="DodgerBlue" />
             </mesh>
             <mesh
-              geometry={nodes.Mesh_body002_2.geometry}
+              geometry={(nodes.Mesh_body002_2 as THREE.Mesh).geometry}
               material={materials.lightFront}
             />
             <mesh
-              geometry={nodes.Mesh_body002_3.geometry}
+              geometry={(nodes.Mesh_body002_3 as THREE.Mesh).geometry}
               material={materials._defaultMat}
             />
             <mesh
-              geometry={nodes.Mesh_body002_4.geometry}
+              geometry={(nodes.Mesh_body002_4 as THREE.Mesh).geometry}
               material={materials.window}
             />
             <mesh
-              geometry={nodes.Mesh_body002_5.geometry}
+              geometry={(nodes.Mesh_body002_5 as THREE.Mesh).geometry}
               material={materials.lightBack}
             />
           </group>
         </MeshCollider>
         <group
-          ref={(ref) => (wheelsRef.current[2] = ref)}
+          ref={(ref) => {
+            if (wheelsRef.current) {
+              wheelsRef.current[2] = ref;
+            }
+          }}
           position={[-0.35, 0.3, 0.76]}
           scale={[-1, 1, 1]}
         >
           <mesh
-            geometry={nodes.Mesh_wheel_frontLeft002.geometry}
-            material={nodes.Mesh_wheel_frontLeft002.material}
+            geometry={(nodes.Mesh_wheel_frontLeft002 as THREE.Mesh).geometry}
+            material={(nodes.Mesh_wheel_frontLeft002 as THREE.Mesh).material}
           />
           <mesh
-            geometry={nodes.Mesh_wheel_frontLeft002_1.geometry}
-            material={nodes.Mesh_wheel_frontLeft002_1.material}
+            geometry={(nodes.Mesh_wheel_frontLeft002_1 as THREE.Mesh).geometry}
+            material={(nodes.Mesh_wheel_frontLeft002_1 as THREE.Mesh).material}
           />
         </group>
         <group
-          ref={(ref) => (wheelsRef.current[3] = ref)}
+          ref={(ref) => {
+            if (wheelsRef.current) {
+              wheelsRef.current[3] = ref;
+            }
+          }}
           position={[0.35, 0.3, 0.76]}
         >
           <mesh
-            geometry={nodes.Mesh_wheel_frontLeft002.geometry}
-            material={nodes.Mesh_wheel_frontLeft002.material}
+            geometry={(nodes.Mesh_wheel_frontLeft002 as THREE.Mesh).geometry}
+            material={(nodes.Mesh_wheel_frontLeft002 as THREE.Mesh).material}
           />
           <mesh
-            geometry={nodes.Mesh_wheel_frontLeft002_1.geometry}
-            material={nodes.Mesh_wheel_frontLeft002_1.material}
+            geometry={(nodes.Mesh_wheel_frontLeft002_1 as THREE.Mesh).geometry}
+            material={(nodes.Mesh_wheel_frontLeft002_1 as THREE.Mesh).material}
           />
         </group>
         <group
-          ref={(ref) => (wheelsRef.current[0] = ref)}
+          ref={(ref) => {
+            if (wheelsRef.current) {
+              wheelsRef.current[0] = ref;
+            }
+          }}
           position={[-0.35, 0.3, -0.86]}
           scale={[-1, 1, 1]}
         >
           <mesh
-            geometry={nodes.Mesh_wheel_frontLeft002.geometry}
-            material={nodes.Mesh_wheel_frontLeft002.material}
+            geometry={(nodes.Mesh_wheel_frontLeft002 as THREE.Mesh).geometry}
+            material={(nodes.Mesh_wheel_frontLeft002 as THREE.Mesh).material}
           />
           <mesh
-            geometry={nodes.Mesh_wheel_frontLeft002_1.geometry}
-            material={nodes.Mesh_wheel_frontLeft002_1.material}
+            geometry={(nodes.Mesh_wheel_frontLeft002_1 as THREE.Mesh).geometry}
+            material={(nodes.Mesh_wheel_frontLeft002_1 as THREE.Mesh).material}
           />
         </group>
         <group
-          ref={(ref) => (wheelsRef.current[1] = ref)}
+          ref={(ref) => {
+            if (wheelsRef.current) {
+              wheelsRef.current[1] = ref;
+            }
+          }}
           position={[0.35, 0.3, -0.86]}
         >
           <mesh
-            geometry={nodes.Mesh_wheel_frontLeft002.geometry}
-            material={nodes.Mesh_wheel_frontLeft002.material}
+            geometry={(nodes.Mesh_wheel_frontLeft002 as THREE.Mesh).geometry}
+            material={(nodes.Mesh_wheel_frontLeft002 as THREE.Mesh).material}
           />
           <mesh
-            geometry={nodes.Mesh_wheel_frontLeft002_1.geometry}
-            material={nodes.Mesh_wheel_frontLeft002_1.material}
+            geometry={(nodes.Mesh_wheel_frontLeft002_1 as THREE.Mesh).geometry}
+            material={(nodes.Mesh_wheel_frontLeft002_1 as THREE.Mesh).material}
           />
         </group>
       </group>
