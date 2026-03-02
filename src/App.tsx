@@ -60,12 +60,12 @@ function World() {
     const light = lightRef.current;
     if (!light) return;
     light.position.copy(state.camera.position);
-    light.position.x += 5;
-    light.position.z += 5;
-    light.position.y = 10;
+    light.position.x += 15;
+    light.position.z += 10;
+    light.position.y = 12;
     light.target.position.copy(state.camera.position);
-    light.target.position.z -= 1;
-    light.target.position.y = 2;
+    light.target.position.z -= 2;
+    light.target.position.y = 0;
     light.target.updateMatrixWorld();
   });
 

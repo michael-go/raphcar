@@ -36,6 +36,28 @@ export function Terrain() {
       (geometry.attributes.position.array as THREE.TypedArray)[index * 3 + 2] =
         v - 0.2;
     });
+
+    // Vertex colors: dark forest green at low elevation → light yellow-green at peaks
+    const maxHeight = 4.0;
+    const colors = new Float32Array(heightField.length * 3);
+    const lowColor = new THREE.Color(0x1a4a0e);   // dark forest green (valleys)
+    const midColor = new THREE.Color(0x3d8b1a);   // medium green (slopes)
+    const highColor = new THREE.Color(0x9ecf50);  // light yellow-green (hilltops)
+    const tempColor = new THREE.Color();
+
+    heightField.forEach((h, index) => {
+      const t = Math.min(Math.max(h / maxHeight, 0), 1);
+      if (t < 0.5) {
+        tempColor.lerpColors(lowColor, midColor, t * 2);
+      } else {
+        tempColor.lerpColors(midColor, highColor, (t - 0.5) * 2);
+      }
+      colors[index * 3] = tempColor.r;
+      colors[index * 3 + 1] = tempColor.g;
+      colors[index * 3 + 2] = tempColor.b;
+    });
+    geometry.setAttribute("color", new THREE.BufferAttribute(colors, 3));
+
     geometry.scale(-1, 1, 1);
     geometry.rotateX(Math.PI / 2);
     geometry.rotateY(Math.PI / 2);
@@ -77,7 +99,9 @@ export function Terrain() {
       <RigidBody colliders={false} position={[0, 0, 0]}>
         <mesh geometry={geometry} castShadow receiveShadow>
           <meshStandardMaterial
-            color="limegreen"
+            vertexColors={true}
+            roughness={0.88}
+            metalness={0}
             side={THREE.DoubleSide}
             shadowSide={THREE.DoubleSide}
           />
