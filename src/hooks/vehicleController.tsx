@@ -17,8 +17,8 @@ export type WheelInfo = {
 };
 
 export function useVehicleController(
-  chassisRef: RefObject<RapierRigidBody>,
-  wheelsRef: RefObject<Object3D[]>,
+  chassisRef: RefObject<RapierRigidBody | null>,
+  wheelsRef: RefObject<(Object3D | null)[]>,
   wheelsInfo: WheelInfo[],
 ) {
   const { world } = useRapier();
@@ -34,6 +34,7 @@ export function useVehicleController(
     const vehicle = world.createVehicleController(chassis);
 
     wheels.forEach((wheel, i) => {
+      if (!wheel) return;
       const boundingBox = new Box3().setFromObject(wheel);
       const radius = (boundingBox.max.y - boundingBox.min.y) * 0.5;
 
@@ -58,6 +59,10 @@ export function useVehicleController(
     });
 
     setVehicleController(vehicle);
+
+    return () => {
+      world.removeVehicleController(vehicle);
+    };
   }, []);
 
   useAfterPhysicsStep((world) => {
@@ -68,6 +73,7 @@ export function useVehicleController(
     const { current: wheels } = wheelsRef;
 
     wheels?.forEach((wheel, index) => {
+      if (!wheel) return;
       const connection =
         vehicleController.wheelChassisConnectionPointCs(index)?.y || 0;
       const suspension = vehicleController.wheelSuspensionLength(index) || 0;

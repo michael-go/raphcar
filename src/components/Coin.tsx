@@ -1,16 +1,17 @@
 import * as THREE from "three";
+import React from "react";
 import { PositionalAudio } from "@react-three/drei";
 import { RefObject, useEffect, useRef, useState } from "react";
 import { useSpring, animated } from "@react-spring/three";
 import { useGameStore, GameStore } from "../stores/gameStore";
 
 export function Coin(
-  props: JSX.IntrinsicElements["group"] & { coinId: string },
+  props: React.JSX.IntrinsicElements["group"] & { coinId: string },
 ) {
   const group = useRef<THREE.Group>(null);
 
   const carRef = useGameStore((state: GameStore) => state.carRef);
-  const collectSoundRef: RefObject<THREE.PositionalAudio> = useRef(null);
+  const collectSoundRef: RefObject<THREE.PositionalAudio | null> = useRef<THREE.PositionalAudio>(null);
   const addCredits = useGameStore((state: GameStore) => state.addCredits);
   const removeCoinId = useGameStore((state: GameStore) => state.removeCoinId);
 

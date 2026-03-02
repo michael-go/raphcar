@@ -27,12 +27,12 @@ export function Car() {
   const [smoothedCameraPosition] = useState(new THREE.Vector3(10, 10, 10));
   const [smoothedCameraTarget] = useState(new THREE.Vector3());
 
-  const chasisMeshRef: RefObject<THREE.Group> = useRef(null);
-  const chasisBodyRef: RefObject<RapierRigidBody> = useRef(null);
+  const chasisMeshRef: RefObject<THREE.Group | null> = useRef<THREE.Group>(null);
+  const chasisBodyRef: RefObject<RapierRigidBody | null> = useRef<RapierRigidBody>(null);
   const wheelsRef: RefObject<(THREE.Object3D | null)[]> = useRef([]);
-  const engineSoundRef: RefObject<THREE.PositionalAudio> = useRef(null);
-  const accelerateSoundRef: RefObject<THREE.PositionalAudio> = useRef(null);
-  const crashSoundRef: RefObject<THREE.PositionalAudio> = useRef(null);
+  const engineSoundRef: RefObject<THREE.PositionalAudio | null> = useRef<THREE.PositionalAudio>(null);
+  const accelerateSoundRef: RefObject<THREE.PositionalAudio | null> = useRef<THREE.PositionalAudio>(null);
+  const crashSoundRef: RefObject<THREE.PositionalAudio | null> = useRef<THREE.PositionalAudio>(null);
 
   const wheelInfo: WheelInfo = {
     axleCs: new THREE.Vector3(1, 0, 0),

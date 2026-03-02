@@ -25,7 +25,7 @@ import { Coin } from "./components/Coin.tsx";
 import { useGameStore, GameStore } from "./stores/gameStore";
 
 function World() {
-  const lightRef: RefObject<THREE.DirectionalLight> = useRef(null);
+  const lightRef: RefObject<THREE.DirectionalLight | null> = useRef<THREE.DirectionalLight>(null);
   const { scene } = useThree();
   scene.environmentIntensity = 0.3;
   const { physDebug } = useControls({ physDebug: false });

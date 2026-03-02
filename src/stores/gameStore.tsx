@@ -3,22 +3,22 @@ import * as THREE from "three";
 import React from "react";
 
 interface GameStore {
-  carRef: React.RefObject<THREE.Group>;
+  carRef: React.RefObject<THREE.Group | null>;
   coinIds: string[];
   credits: number;
 
-  setCarRef: (ref: React.RefObject<THREE.Group>) => void;
+  setCarRef: (ref: React.RefObject<THREE.Group | null>) => void;
   addCoinId: (id: string) => void;
   removeCoinId: (id: string) => void;
   addCredits: (credits: number) => void;
 }
 
 const useGameStore = create<GameStore>((set) => ({
-  carRef: React.createRef(),
+  carRef: React.createRef<THREE.Group>(),
   coinIds: [],
   credits: 0,
 
-  setCarRef: (ref: React.RefObject<THREE.Group>) => set({ carRef: ref }),
+  setCarRef: (ref: React.RefObject<THREE.Group | null>) => set({ carRef: ref }),
   addCoinId: (id: string) =>
     set((state: GameStore) => ({ coinIds: [...state.coinIds, id] })),
   removeCoinId: (id: string) =>
