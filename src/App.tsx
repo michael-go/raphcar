@@ -1,7 +1,7 @@
 import "./App.css";
 
 import { RefObject, useEffect, useMemo, useRef } from "react";
-import { Canvas, useFrame } from "@react-three/fiber";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import {
   Hud,
   PerspectiveCamera,
@@ -9,6 +9,7 @@ import {
   KeyboardControlsEntry,
   OrbitControls,
   Text,
+  Environment,
 } from "@react-three/drei";
 import { Physics } from "@react-three/rapier";
 import { useControls, Leva } from "leva";
@@ -25,6 +26,8 @@ import { useGameStore, GameStore } from "./stores/gameStore";
 
 function World() {
   const lightRef: RefObject<THREE.DirectionalLight> = useRef(null);
+  const { scene } = useThree();
+  scene.environmentIntensity = 0.3;
   const { physDebug } = useControls({ physDebug: false });
   const credits = useGameStore((state: GameStore) => state.credits);
   const addCoinId = useGameStore((state: GameStore) => state.addCoinId);
@@ -86,6 +89,7 @@ function World() {
         shadow-camera-bottom={-50}
         shadow-camera-top={50}
       />
+      <Environment preset="sunset" background={false} />
       <axesHelper scale={20} visible={false} />
       <Physics debug={physDebug}>
         <Terrain />
