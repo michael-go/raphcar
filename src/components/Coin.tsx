@@ -1,26 +1,13 @@
 import * as THREE from "three";
-import { PositionalAudio, useGLTF } from "@react-three/drei";
-import { GLTF } from "three-stdlib";
+import { PositionalAudio } from "@react-three/drei";
 import { RefObject, useEffect, useRef, useState } from "react";
 import { useSpring, animated } from "@react-spring/three";
 import { useGameStore, GameStore } from "../stores/gameStore";
-
-type GLTFResult = GLTF & {
-  nodes: {
-    coin: THREE.Mesh;
-  };
-  materials: {
-    ["Gold.009"]: THREE.MeshStandardMaterial;
-  };
-};
 
 export function Coin(
   props: JSX.IntrinsicElements["group"] & { coinId: string },
 ) {
   const group = useRef<THREE.Group>(null);
-  const { nodes, materials } = useGLTF(
-    "https://vazxmixjsiawhamofees.supabase.co/storage/v1/object/public/models/coin/model.gltf",
-  ) as GLTFResult;
 
   const carRef = useGameStore((state: GameStore) => state.carRef);
   const collectSoundRef: RefObject<THREE.PositionalAudio> = useRef(null);
@@ -82,11 +69,12 @@ export function Coin(
   return (
     <group ref={group} castShadow receiveShadow {...props} dispose={null}>
       <animated.mesh
-        geometry={nodes.coin.geometry}
-        material={materials["Gold.009"]}
         rotation={rotation as any}
         position-y={collectAnimationStyles.position}
-      />
+      >
+        <cylinderGeometry args={[0.4, 0.4, 0.08, 32]} />
+        <meshStandardMaterial color="gold" metalness={0.9} roughness={0.05} />
+      </animated.mesh>
       <PositionalAudio
         ref={collectSoundRef}
         url="/assets/sounds/coin-collected.mp3"
@@ -96,7 +84,3 @@ export function Coin(
     </group>
   );
 }
-
-useGLTF.preload(
-  "https://vazxmixjsiawhamofees.supabase.co/storage/v1/object/public/models/coin/model.gltf",
-);

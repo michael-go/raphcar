@@ -181,7 +181,7 @@ export function Car() {
   }, []);
 
   const { nodes, materials } = useGLTF(
-    "https://vazxmixjsiawhamofees.supabase.co/storage/v1/object/public/models/truck/model.gltf",
+    "https://raw.githubusercontent.com/pmndrs/market-assets/main/files/models/truck/model.gltf",
   ) as ObjectMap;
 
   return (
@@ -326,6 +326,4 @@ export function Car() {
   );
 }
 
-useGLTF.preload(
-  "https://vazxmixjsiawhamofees.supabase.co/storage/v1/object/public/models/truck/model.gltf",
-);
+useGLTF.preload("https://raw.githubusercontent.com/pmndrs/market-assets/main/files/models/truck/model.gltf");

@@ -58,11 +58,8 @@ export function Terrain() {
         0,
         (Math.random() - 0.5) * width,
       ]);
-      scales.push([
-        Math.max(0.8, Math.random()),
-        Math.max(0.7, Math.random()),
-        Math.max(0.8, Math.random()),
-      ]);
+      const s = 5 + Math.random() * 4;
+      scales.push([s, s, s]);
     }
 
     return [positions, scales];
