@@ -1,9 +1,14 @@
 import * as THREE from "three";
 import React from "react";
 import { PositionalAudio } from "@react-three/drei";
-import { RefObject, useEffect, useRef, useState } from "react";
+import { RefObject, useRef, useState } from "react";
 import { useSpring, animated } from "@react-spring/three";
+import { useFrame } from "@react-three/fiber";
 import { useGameStore, GameStore } from "../stores/gameStore";
+
+// Reused vectors to avoid per-frame allocations
+const _carPos = new THREE.Vector3();
+const _coinPos = new THREE.Vector3();
 
 export function Coin(
   props: React.JSX.IntrinsicElements["group"] & { coinId: string },
@@ -36,36 +41,24 @@ export function Coin(
     },
   }));
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (!group.current) return;
-      if (!carRef.current) return;
-      if (isCollected) return;
+  useFrame(() => {
+    if (!group.current || !carRef.current || isCollected) return;
 
-      const carPosition = carRef.current?.getWorldPosition(new THREE.Vector3());
-      const coinPosition = group.current?.getWorldPosition(new THREE.Vector3());
+    carRef.current.getWorldPosition(_carPos);
+    group.current.getWorldPosition(_coinPos);
 
-      const distance = carPosition.distanceTo(coinPosition);
-
-      if (distance < 1.5) {
-        setIsCollected(true);
-        collectSoundRef.current?.play();
-        addCredits(1);
-        collectAnimationApi.start({
-          to: {
-            position: 20,
-          },
-          config: {
-            duration: 2000, // Complete rotation takes 2 seconds
-          },
-          onRest: () => {
-            removeCoinId(props.coinId);
-          },
-        });
-      }
-    }, 1);
-    return () => clearInterval(interval);
-  }, [carRef, group, isCollected, addCredits, props.coinId]);
+    const distance = _carPos.distanceTo(_coinPos);
+    if (distance < 1.5) {
+      setIsCollected(true);
+      collectSoundRef.current?.play();
+      addCredits(1);
+      collectAnimationApi.start({
+        to: { position: 20 },
+        config: { duration: 2000 },
+        onRest: () => removeCoinId(props.coinId),
+      });
+    }
+  });
 
   return (
     <group ref={group} castShadow receiveShadow {...props} dispose={null}>
