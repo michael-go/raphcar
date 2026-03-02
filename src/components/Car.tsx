@@ -57,14 +57,17 @@ export function Car() {
     setCarRef(chasisMeshRef);
   }, [chasisMeshRef, setCarRef]);
 
+
   useFrame((_, delta) => {
     if (!vehicleController) return;
 
     const accelerateForce = 48;
     const brakeForce = 12;
-    const steerAngle = Math.PI / 18;
 
     const speed = vehicleController.currentVehicleSpeed();
+
+    // Reduce steer angle at higher speeds to prevent sharp-turn flipping
+    const steerAngle = (Math.PI / 14) * Math.max(0.5, 1 - Math.abs(speed) / 40);
 
     const controls = get();
 
@@ -100,7 +103,7 @@ export function Car() {
     const steering = MathUtils.lerp(
       currentSteering,
       steerAngle * steerDirection,
-      0.5,
+      0.2,
     );
 
     vehicleController.setWheelSteering(0, steering);
@@ -204,6 +207,7 @@ export function Car() {
   return (
     <RigidBody
       linearDamping={0.5}
+      angularDamping={3}
       canSleep={false}
       ref={chasisBodyRef}
       colliders={false}
