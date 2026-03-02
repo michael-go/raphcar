@@ -107,7 +107,7 @@ export function Car() {
     vehicleController.setWheelSteering(1, steering);
   });
 
-  const jumproll = () => {
+  const recover = () => {
     if (!chasisBodyRef.current) return;
 
     const origin = chasisBodyRef.current.translation();
@@ -126,14 +126,25 @@ export function Car() {
       },
     );
 
-    console.log(hit);
-    // TODO: check also rotation of the car, otherwise it can jump during jumps
     if (hit && hit.timeOfImpact > 0.15 && hit.timeOfImpact < 1.5) {
-      chasisBodyRef.current.applyImpulse({ x: 5, y: 30, z: 5 }, true);
-      chasisBodyRef.current.applyTorqueImpulse(
-        { x: Math.random() * 5, y: Math.random() * 5, z: Math.random() * 5 },
-        true,
-      );
+      const rotation = chasisBodyRef.current.rotation();
+      const quat = new THREE.Quaternion(rotation.x, rotation.y, rotation.z, rotation.w);
+
+      // Project the car's forward axis onto the XZ plane to extract yaw only
+      const worldForward = new THREE.Vector3(0, 0, 1).applyQuaternion(quat);
+      worldForward.y = 0;
+      if (worldForward.lengthSq() < 0.001) worldForward.set(0, 0, 1);
+      else worldForward.normalize();
+
+      const yaw = Math.atan2(worldForward.x, worldForward.z);
+      const uprightQuat = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), yaw);
+
+      // Place the car 1.5m above the ground so it falls cleanly onto its wheels
+      const groundY = origin.y - hit.timeOfImpact;
+      chasisBodyRef.current.setTranslation({ x: origin.x, y: groundY + 1.5, z: origin.z }, true);
+      chasisBodyRef.current.setRotation({ x: uprightQuat.x, y: uprightQuat.y, z: uprightQuat.z, w: uprightQuat.w }, true);
+      chasisBodyRef.current.setLinvel({ x: 0, y: 0, z: 0 }, true);
+      chasisBodyRef.current.setAngvel({ x: 0, y: 0, z: 0 }, true);
     }
   };
 
@@ -171,7 +182,7 @@ export function Car() {
     const unsubscribeJump = sub(
       (state) => state.jumproll,
       (value) => {
-        if (value) jumproll();
+        if (value) recover();
       },
     );
 
