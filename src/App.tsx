@@ -1,6 +1,6 @@
 import "./App.css";
 
-import { RefObject, useEffect, useMemo, useRef } from "react";
+import { RefObject, useEffect, useMemo, useRef, useState } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import {
   Hud,
@@ -129,10 +129,21 @@ function App() {
     [],
   );
 
+  const [frameloop, setFrameloop] = useState<"always" | "never">("always");
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      setFrameloop(document.hidden ? "never" : "always");
+    };
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () =>
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+  }, []);
+
   return (
     <KeyboardControls map={keyMap}>
       <Canvas
         shadows
+        frameloop={frameloop}
         camera={{ fov: 45, near: 0.1, far: 400, position: [3, 5, 10] }}
       >
         {window.location.hash === "#debug" && (
