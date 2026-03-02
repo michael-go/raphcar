@@ -195,6 +195,12 @@ export function Car() {
     "https://raw.githubusercontent.com/pmndrs/market-assets/main/files/models/truck/model.gltf",
   ) as ObjectMap;
 
+  useEffect(() => {
+    Object.values(materials).forEach((material) => {
+      (material as THREE.Material).shadowSide = THREE.DoubleSide;
+    });
+  }, [materials]);
+
   return (
     <RigidBody
       linearDamping={0.5}
@@ -221,24 +227,29 @@ export function Car() {
               material={materials.plastic}
             />
             <mesh
+              castShadow
               geometry={(nodes.Mesh_body002_1 as THREE.Mesh).geometry}
               // original: material={materials.paintGreen}
             >
-              <meshStandardMaterial color="DodgerBlue" />
+              <meshStandardMaterial color="DodgerBlue" shadowSide={THREE.DoubleSide} />
             </mesh>
             <mesh
+              castShadow
               geometry={(nodes.Mesh_body002_2 as THREE.Mesh).geometry}
               material={materials.lightFront}
             />
             <mesh
+              castShadow
               geometry={(nodes.Mesh_body002_3 as THREE.Mesh).geometry}
               material={materials._defaultMat}
             />
             <mesh
+              castShadow
               geometry={(nodes.Mesh_body002_4 as THREE.Mesh).geometry}
               material={materials.window}
             />
             <mesh
+              castShadow
               geometry={(nodes.Mesh_body002_5 as THREE.Mesh).geometry}
               material={materials.lightBack}
             />
@@ -254,10 +265,12 @@ export function Car() {
           scale={[-1, 1, 1]}
         >
           <mesh
+            castShadow
             geometry={(nodes.Mesh_wheel_frontLeft002 as THREE.Mesh).geometry}
             material={(nodes.Mesh_wheel_frontLeft002 as THREE.Mesh).material}
           />
           <mesh
+            castShadow
             geometry={(nodes.Mesh_wheel_frontLeft002_1 as THREE.Mesh).geometry}
             material={(nodes.Mesh_wheel_frontLeft002_1 as THREE.Mesh).material}
           />
@@ -271,10 +284,12 @@ export function Car() {
           position={[0.35, 0.3, 0.76]}
         >
           <mesh
+            castShadow
             geometry={(nodes.Mesh_wheel_frontLeft002 as THREE.Mesh).geometry}
             material={(nodes.Mesh_wheel_frontLeft002 as THREE.Mesh).material}
           />
           <mesh
+            castShadow
             geometry={(nodes.Mesh_wheel_frontLeft002_1 as THREE.Mesh).geometry}
             material={(nodes.Mesh_wheel_frontLeft002_1 as THREE.Mesh).material}
           />
@@ -289,10 +304,12 @@ export function Car() {
           scale={[-1, 1, 1]}
         >
           <mesh
+            castShadow
             geometry={(nodes.Mesh_wheel_frontLeft002 as THREE.Mesh).geometry}
             material={(nodes.Mesh_wheel_frontLeft002 as THREE.Mesh).material}
           />
           <mesh
+            castShadow
             geometry={(nodes.Mesh_wheel_frontLeft002_1 as THREE.Mesh).geometry}
             material={(nodes.Mesh_wheel_frontLeft002_1 as THREE.Mesh).material}
           />
@@ -306,10 +323,12 @@ export function Car() {
           position={[0.35, 0.3, -0.86]}
         >
           <mesh
+            castShadow
             geometry={(nodes.Mesh_wheel_frontLeft002 as THREE.Mesh).geometry}
             material={(nodes.Mesh_wheel_frontLeft002 as THREE.Mesh).material}
           />
           <mesh
+            castShadow
             geometry={(nodes.Mesh_wheel_frontLeft002_1 as THREE.Mesh).geometry}
             material={(nodes.Mesh_wheel_frontLeft002_1 as THREE.Mesh).material}
           />
